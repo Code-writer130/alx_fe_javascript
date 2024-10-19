@@ -33,7 +33,7 @@ function showRandomQuote() {
 }
 
 // Function to add a new quote dynamically using createElement and appendChild
-function addQuote() {
+function creatAddQuoteForm() {
   // Get the values from the input fields
   const newQuoteText = document.getElementById("newQuoteText").value;
   const newQuoteCategory = document.getElementById("newQuoteCategory").value;
