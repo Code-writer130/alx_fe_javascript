@@ -1,4 +1,4 @@
-// Array to store quotes
+// Step 1: Create an array of quote objects (each with text and category)
 const quotes = [
   {
     text: "The only way to do great work is to love what you do.",
@@ -14,28 +14,28 @@ const quotes = [
   },
 ];
 
-// Function to display a random quote
+// Function to display a random quote using innerHTML
 function showRandomQuote() {
+  // Get a random quote from the array
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
+
+  // Find the quote display area in the DOM
   const quoteDisplay = document.getElementById("quote-display");
-  quoteDisplay.textContent = `"${randomQuote.text}" - (${randomQuote.category})`;
+
+  // Update the DOM using innerHTML to allow for any HTML formatting
+  quoteDisplay.innerHTML = `<p>"${randomQuote.text}" - <strong>(${randomQuote.category})</strong></p>`;
 }
 
-// Add event listener to the "Show Random Quote" button
-document
-  .getElementById("random-quote-btn")
-  .addEventListener("click", showRandomQuote);
-
-// Function to add a new quote
+// Function to add a new quote dynamically using innerHTML
 function addQuote() {
   // Get the values from the input fields
   const newQuoteText = document.getElementById("newQuoteText").value;
   const newQuoteCategory = document.getElementById("newQuoteCategory").value;
 
-  // Ensure both fields are filled
+  // Ensure that both fields are filled
   if (newQuoteText === "" || newQuoteCategory === "") {
-    alert("Please fill out both fields");
+    alert("Please fill out both the quote and the category");
     return;
   }
 
@@ -45,14 +45,19 @@ function addQuote() {
   // Add the new quote to the array
   quotes.push(newQuote);
 
-  // Optionally, display the newly added quote immediately
-  document.getElementById(
-    "quote-display"
-  ).textContent = `"${newQuoteText}" - (${newQuoteCategory})`;
+  // Optionally, display the new quote immediately using innerHTML
+  const quoteDisplay = document.getElementById("quote-display");
+  quoteDisplay.innerHTML = `<p>"${newQuoteText}" - <strong>(${newQuoteCategory})</strong></p>`;
 
   // Clear the input fields after submission
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
 
-  alert("Quote added successfully!");
+  // Provide confirmation
+  alert("New quote added!");
 }
+
+// Event listener for showing a random quote when the button is clicked
+document
+  .getElementById("random-quote-btn")
+  .addEventListener("click", showRandomQuote);
