@@ -133,16 +133,23 @@ function loadQuotes() {
 }
 
 function exportToJsonFile() {
-  const dataStr = JSON.stringify(quotes);
-  const dataUri =
-    "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+  // Step 1: Stringify the quotes array to turn it into JSON format
+  const dataStr = JSON.stringify(quotes, null, 2); // Pretty print JSON with 2-space indentation
 
-  const exportFileDefaultName = "quotes.json";
+  // Step 2: Create a Blob from the JSON string
+  const blob = new Blob([dataStr], { type: "application/json" });
 
-  const linkElement = document.createElement("a");
-  linkElement.setAttribute("href", dataUri);
-  linkElement.setAttribute("download", exportFileDefaultName);
-  linkElement.click();
+  // Step 3: Create an object URL from the Blob
+  const url = URL.createObjectURL(blob);
+
+  // Step 4: Create an anchor element and trigger a download
+  const downloadLink = document.createElement("a");
+  downloadLink.href = url;
+  downloadLink.download = "quotes.json"; // Set the downloaded file name
+  downloadLink.click(); // Simulate a click to trigger the download
+
+  // Step 5: Clean up the object URL
+  URL.revokeObjectURL(url); // Free up memory when the download is complete
 }
 
 function importFromJsonFile(event) {
