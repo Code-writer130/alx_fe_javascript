@@ -111,3 +111,53 @@ document
 
 // Call the function to create and handle the form logic when the DOM is ready
 createAddQuoteForm();
+// Function to save quotes to local storage
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes)); // Save the quotes array as a JSON string
+}
+
+// Function to load quotes from local storage on initialization
+// Function to save quotes to local storage
+function saveQuotes() {
+  // Stringify the quotes array and store it in localStorage under the key 'quotes'
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
+// Load quotes from local storage when the page loads
+// Function to load quotes from local storage
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem("quotes"); // Retrieve the string from local storage
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes); // Convert the JSON string back to an array of quotes
+  }
+}
+
+function exportToJsonFile() {
+  const dataStr = JSON.stringify(quotes);
+  const dataUri =
+    "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+
+  const exportFileDefaultName = "quotes.json";
+
+  const linkElement = document.createElement("a");
+  linkElement.setAttribute("href", dataUri);
+  linkElement.setAttribute("download", exportFileDefaultName);
+  linkElement.click();
+}
+
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+
+  fileReader.onload = function (event) {
+    try {
+      const importedQuotes = JSON.parse(event.target.result); // Parse the uploaded JSON
+      quotes.push(...importedQuotes); // Add imported quotes to the array
+      saveQuotes(); // Save updated quotes to local storage
+      alert("Quotes imported successfully!");
+    } catch (error) {
+      alert("Invalid JSON file");
+    }
+  };
+
+  fileReader.readAsText(event.target.files[0]); // Read the uploaded file
+}
