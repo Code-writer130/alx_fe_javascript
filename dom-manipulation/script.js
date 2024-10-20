@@ -250,3 +250,62 @@ window.onload = function () {
   populateCategories();
   loadLastSelectedFilter();
 };
+// Mock function to simulate fetching data from the server
+async function fetchQuotesFromServer() {
+  // Simulating a fetch from a mock server using JSONPlaceholder or a similar service
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const serverQuotes = await response.json();
+
+  // For simplicity, let's assume each serverQuote has 'text' and 'category'
+  return serverQuotes.map((item) => ({
+    text: item.title,
+    category: "Motivation", // Example category, adjust as needed
+  }));
+}
+
+// Function to sync local data with server
+async function syncWithServer() {
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  const serverQuotes = await fetchQuotesFromServer();
+
+  // Merge and handle conflicts (server data takes precedence)
+  const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
+
+  // Update local storage with the merged data
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+
+  // Notify the user about updates or conflicts
+  notifyUser("Data has been synced with the server.");
+}
+
+// Function to merge local and server quotes, handling conflicts
+function mergeQuotes(localQuotes, serverQuotes) {
+  const merged = [...serverQuotes];
+  const existingTexts = new Set(serverQuotes.map((quote) => quote.text));
+
+  // Add local quotes that are not present on the server
+  localQuotes.forEach((localQuote) => {
+    if (!existingTexts.has(localQuote.text)) {
+      merged.push(localQuote);
+    }
+  });
+
+  return merged;
+}
+
+// Function to notify user of updates or conflicts
+function notifyUser(message) {
+  // Simple notification implementation (could be a modal, toast, etc.)
+  alert(message);
+}
+
+// Function to start periodic syncing
+function startPeriodicSync(interval = 30000) {
+  // Default interval is 30 seconds
+  setInterval(syncWithServer, interval);
+}
+
+// Initialize syncing on page load
+window.onload = function () {
+  startPeriodicSync(); // Start syncing every 30 seconds
+};
