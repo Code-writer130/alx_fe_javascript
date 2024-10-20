@@ -168,3 +168,85 @@ function importFromJsonFile(event) {
 
   fileReader.readAsText(event.target.files[0]); // Read the uploaded file
 }
+
+// Function to populate categories in the dropdown
+function populateCategories() {
+  const categoryFilter = document.getElementById("categoryFilter");
+  const categories = new Set();
+
+  // Add a default "all" category
+  categories.add("All Categories");
+
+  // Extract unique categories from the quotes array
+  quotes.forEach((quote) => categories.add(quote.category));
+
+  // Populate the dropdown menu
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.toLowerCase();
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+
+// Function to filter quotes based on the selected category
+function filterQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  const quoteContainer = document.getElementById("quoteContainer");
+
+  // Save the last selected category in local storage
+  localStorage.setItem("selectedCategory", selectedCategory);
+
+  // Clear the current displayed quotes
+  quoteContainer.innerHTML = "";
+
+  // Filter and display quotes
+  const filteredQuotes =
+    selectedCategory === "all"
+      ? quotes
+      : quotes.filter(
+          (quote) => quote.category.toLowerCase() === selectedCategory
+        );
+
+  filteredQuotes.forEach((quote) => {
+    const quoteElement = document.createElement("p");
+    quoteElement.textContent = quote.text;
+    quoteContainer.appendChild(quoteElement);
+  });
+}
+
+// Function to remember the last selected filter
+function loadLastSelectedFilter() {
+  const lastSelectedCategory =
+    localStorage.getItem("selectedCategory") || "all";
+  document.getElementById("categoryFilter").value = lastSelectedCategory;
+  filterQuotes();
+}
+
+// Function to add new quotes and update categories
+function addQuote(text, category) {
+  // Add the new quote to the quotes array
+  quotes.push({ text, category });
+
+  // Check if the new category is not already in the dropdown
+  const categoryFilter = document.getElementById("categoryFilter");
+  const categories = Array.from(categoryFilter.options).map(
+    (option) => option.value
+  );
+
+  if (!categories.includes(category.toLowerCase())) {
+    const option = document.createElement("option");
+    option.value = category.toLowerCase();
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  }
+
+  // Refresh the quotes display to include the new quote if the category matches
+  filterQuotes();
+}
+
+// Call the functions to set up the application
+window.onload = function () {
+  populateCategories();
+  loadLastSelectedFilter();
+};
