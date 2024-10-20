@@ -3,22 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dynamic Quote Generator</title>
+    <title>Quote Manager</title>
   </head>
   <body>
-    <h1>Dynamic Quote Generator</h1>
-    <div id="quoteDisplay"></div>
-    <button id="newQuote">Show New Quote</button>
-    <script src="script.js"></script>
+    <h1>Random Quote Generator</h1>
 
-    <div>
-      <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-      <input
-        id="newQuoteCategory"
-        type="text"
-        placeholder="Enter quote category"
-      />
-      <button onclick="addQuote()">Add Quote</button>
-    </div>
+    <!-- This will display the random quote -->
+    <div id="quote-display"></div>
+
+    <!-- Button to show a random quote -->
+    <button id="random-quote-btn">Show Random Quote</button>
+
+    <h2>Add a New Quote</h2>
+
+    <!-- Container for the dynamic form -->
+    <div id="form-container"></div>
+
+    <script src="script.js"></script>
   </body>
 </html>
