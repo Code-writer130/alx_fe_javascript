@@ -438,3 +438,94 @@ function addNewQuote(text, category) {
   // Sync local quotes to server
   syncLocalQuotesToServer();
 }
+// Function to send local quotes to the server that haven't been synced yet
+async function syncLocalQuotesToServer() {
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  const unsyncedQuotes = localQuotes.filter((quote) => !quote.synced);
+
+  for (const quote of unsyncedQuotes) {
+    await postQuoteToServer(quote);
+    // Mark the quote as synced after successful POST
+    quote.synced = true;
+  }
+
+  // Update local storage to reflect the synced status
+  localStorage.setItem("quotes", JSON.stringify(localQuotes));
+}
+
+// Function to fetch new quotes from the server and merge with local quotes
+async function syncQuotes() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  // Merge server quotes with local quotes
+  const mergedQuotes = mergeQuotes(localQuotes, serverQuotes);
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+
+  // Notify user
+  notifyUser("Quotes synced with server!");
+}
+
+// Function to merge local and server quotes, handling conflicts
+function mergeQuotes(localQuotes, serverQuotes) {
+  const merged = [...serverQuotes];
+  const existingTexts = new Set(serverQuotes.map((quote) => quote.text));
+
+  // Add local quotes that are not present on the server
+  localQuotes.forEach((localQuote) => {
+    if (!existingTexts.has(localQuote.text)) {
+      merged.push(localQuote);
+    }
+  });
+
+  return merged;
+}
+
+// Function to send new quotes to the server
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: quote.text,
+        category: quote.category,
+      }),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log("Quote successfully sent to the server:", responseData);
+    } else {
+      console.error("Failed to send the quote to the server.");
+    }
+  } catch (error) {
+    console.error("Error sending quote to server:", error);
+  }
+}
+
+// Function to notify user of updates or conflicts
+function notifyUser(message) {
+  alert(message); // Simple alert, could be enhanced for better UI
+}
+
+// Initialize the app and sync on load
+window.onload = function () {
+  syncQuotes();
+  setInterval(syncQuotes, 30000); // Sync every 30 seconds
+};
+
+// Add new quote function to add locally and sync to server
+function addNewQuote(text, category) {
+  const newQuote = { text, category, synced: false };
+
+  // Add to local storage
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  localQuotes.push(newQuote);
+  localStorage.setItem("quotes", JSON.stringify(localQuotes));
+
+  // Sync local quotes to server
+  syncLocalQuotesToServer();
+}
