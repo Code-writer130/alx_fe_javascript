@@ -32,44 +32,82 @@ function showRandomQuote() {
   quoteDisplay.appendChild(quoteParagraph);
 }
 
-// Function to add a new quote dynamically using createElement and appendChild
-function creatAddQuoteForm() {
-  // Get the values from the input fields
-  const newQuoteText = document.getElementById("newQuoteText").value;
-  const newQuoteCategory = document.getElementById("newQuoteCategory").value;
+// Function to dynamically create and display the quote addition form
+function createAddQuoteForm() {
+  // Get the parent container where the form will be added
+  const formContainer = document.getElementById("form-container");
 
-  // Ensure that both fields are filled
-  if (newQuoteText === "" || newQuoteCategory === "") {
-    alert("Please fill out both the quote and the category");
-    return;
-  }
+  // Create a form element
+  const form = document.createElement("form");
+  form.id = "quote-form";
 
-  // Create a new quote object
-  const newQuote = { text: newQuoteText, category: newQuoteCategory };
+  // Create input for new quote text
+  const newQuoteTextInput = document.createElement("input");
+  newQuoteTextInput.id = "newQuoteText";
+  newQuoteTextInput.type = "text";
+  newQuoteTextInput.placeholder = "Enter a new quote";
+  form.appendChild(newQuoteTextInput);
 
-  // Add the new quote to the array
-  quotes.push(newQuote);
+  // Create input for new quote category
+  const newQuoteCategoryInput = document.createElement("input");
+  newQuoteCategoryInput.id = "newQuoteCategory";
+  newQuoteCategoryInput.type = "text";
+  newQuoteCategoryInput.placeholder = "Enter quote category";
+  form.appendChild(newQuoteCategoryInput);
 
-  // Optionally, display the new quote immediately
-  const quoteDisplay = document.getElementById("quote-display");
-  quoteDisplay.innerHTML = ""; // Clear previous quote
+  // Create a button to submit the form
+  const submitButton = document.createElement("button");
+  submitButton.type = "submit";
+  submitButton.textContent = "Add Quote";
+  form.appendChild(submitButton);
 
-  // Create a new paragraph element for the newly added quote
-  const newQuoteParagraph = document.createElement("p");
-  newQuoteParagraph.textContent = `"${newQuoteText}" - (${newQuoteCategory})`;
+  // Append the form to the form container in the DOM
+  formContainer.appendChild(form);
 
-  // Append the new quote paragraph to the quote display area
-  quoteDisplay.appendChild(newQuoteParagraph);
+  // Add an event listener to handle the form submission
+  form.addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent default form submission
 
-  // Clear the input fields after submission
-  document.getElementById("newQuoteText").value = "";
-  document.getElementById("newQuoteCategory").value = "";
+    // Get the values from the input fields
+    const newQuoteText = document.getElementById("newQuoteText").value;
+    const newQuoteCategory = document.getElementById("newQuoteCategory").value;
 
-  // Provide confirmation
-  alert("New quote added!");
+    // Ensure that both fields are filled
+    if (newQuoteText === "" || newQuoteCategory === "") {
+      alert("Please fill out both the quote and the category");
+      return;
+    }
+
+    // Create a new quote object
+    const newQuote = { text: newQuoteText, category: newQuoteCategory };
+
+    // Add the new quote to the array
+    quotes.push(newQuote);
+
+    // Optionally, display the new quote immediately
+    const quoteDisplay = document.getElementById("quote-display");
+    quoteDisplay.innerHTML = ""; // Clear previous quote
+
+    // Create a new paragraph element for the newly added quote
+    const newQuoteParagraph = document.createElement("p");
+    newQuoteParagraph.textContent = `"${newQuoteText}" - (${newQuoteCategory})`;
+
+    // Append the new quote paragraph to the quote display area
+    quoteDisplay.appendChild(newQuoteParagraph);
+
+    // Clear the input fields after submission
+    document.getElementById("newQuoteText").value = "";
+    document.getElementById("newQuoteCategory").value = "";
+
+    // Provide confirmation
+    alert("New quote added!");
+  });
 }
 
 // Event listener for showing a random quote when the button is clicked
 document
   .getElementById("random-quote-btn")
   .addEventListener("click", showRandomQuote);
+
+// Call the function to create and handle the form logic when the DOM is ready
+createAddQuoteForm();
