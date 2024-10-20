@@ -264,6 +264,46 @@ async function fetchQuotesFromServer() {
 }
 
 // Function to sync local data with server
+// Function to send new quotes to the server
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: quote.text, // Adjust the structure as per your server requirements
+        category: quote.category,
+      }),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log("Quote successfully sent to the server:", responseData);
+      notifyUser("New quote added and synced with the server.");
+    } else {
+      console.error("Failed to send the quote to the server.");
+    }
+  } catch (error) {
+    console.error("Error sending quote to server:", error);
+  }
+}
+
+// Function to add a new quote and send it to the server
+function addNewQuote(text, category) {
+  const newQuote = { text, category };
+
+  // Add to local quotes
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  localQuotes.push(newQuote);
+  localStorage.setItem("quotes", JSON.stringify(localQuotes));
+
+  // Send the new quote to the server
+  postQuoteToServer(newQuote);
+}
+
+// Function to sync data periodically and handle conflicts
 async function syncWithServer() {
   const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
   const serverQuotes = await fetchQuotesFromServer();
@@ -295,17 +335,15 @@ function mergeQuotes(localQuotes, serverQuotes) {
 
 // Function to notify user of updates or conflicts
 function notifyUser(message) {
-  // Simple notification implementation (could be a modal, toast, etc.)
-  alert(message);
+  alert(message); // This could be enhanced to use better UI notifications
 }
+
+// Initialize the application and set up periodic sync
+window.onload = function () {
+  startPeriodicSync();
+};
 
 // Function to start periodic syncing
 function startPeriodicSync(interval = 30000) {
-  // Default interval is 30 seconds
   setInterval(syncWithServer, interval);
 }
-
-// Initialize syncing on page load
-window.onload = function () {
-  startPeriodicSync(); // Start syncing every 30 seconds
-};
